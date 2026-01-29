@@ -1,0 +1,22 @@
+{
+  "paths": {
+    "train_csv": "/content/drive/MyDrive/github/cls-vs-mean-pooling-transformer-classification/data/processed/train.csv",
+    "val_csv": "/content/drive/MyDrive/github/cls-vs-mean-pooling-transformer-classification/data/processed/val.csv",
+    "test_csv": "/content/drive/MyDrive/github/cls-vs-mean-pooling-transformer-classification/data/processed/test.csv",
+    "model_path": "/content/drive/MyDrive/github/cls-vs-mean-pooling-transformer-classification/data/processed/tokenizer.model"
+  },
+  "model": {
+    "vocab_size": 8000,
+    "max_len": 256,
+    "n_head": 8,
+    "d_ff": 1024,
+    "n_layers": 8,
+    "num_class": 4,
+    "dropout": 0.3
+  },
+  "train": {
+    "train_batch_size": 8,
+    "val_batch_size": 8,
+    "test_batch_size": 4
+  }
+}
