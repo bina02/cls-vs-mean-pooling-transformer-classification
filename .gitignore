@@ -17,6 +17,7 @@ datasets/
 
 # 4. Trained model weights
 *.pth
+*.pt
 *.h5
 *.pkl
 checkpoint/
