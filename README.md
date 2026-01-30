@@ -232,5 +232,6 @@ At 12 layers, the Mean Pooling model's performance collapsed to an accuracy of 0
 ## 6.4 Review
 In the final evaluation on the test data, the **`<CLS>` Token model** demonstrated slightly superior performance compared to the Mean Pooling model, though the margin remained narrow in shallow configurations. However, the most significant finding occurred when the model depth was increased to **12 layers**. In this deep architecture, the **Mean Pooling model's performance collapsed**, performing no better than a **random classifier**. This highlights a critical limitation of mean pooling in deep Transformers, where the accumulation of noise across layers overwhelms the averaged semantic signal. In contrast, the `<CLS>` token's ability to selectively aggregate information through self-attention proved essential for maintaining model robustness as depth increased.
 
-# 6. Conclution
+# 7. Conclution
 In summary, my experiment reveals that **Mean Pooling fails to work in deep models (such as 12 layers)**. This happens because, as the model gets deeper, "noise" or useless information builds up. When we average all the words together, this noise drowns out the actual meaning of the text, leading to a complete failure in performance. On the other hand, **the `<CLS>` token remains effective even in deep layers** because it uses attention to pick only the important information for classification. Therefore, **for deep Transformer models, using the `<CLS>` token is a much more reliable choice** than simple mean pooling to keep the model's performance stable.
+
