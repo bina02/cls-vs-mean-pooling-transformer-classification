@@ -1,5 +1,7 @@
 # cls-vs-mean-pooling-transformer-classification
-이 프로젝트는 transformer모델에서 <b>cls와 mean_pooling 방식으로 분류</b> 작업을 하고, 두 개가 어떤 특징을 가지고 있는지, 비교 분석하는 프로젝트입니다.
+# Comparative Analysis: <CLS> Token vs. Mean Pooling in Transformer-based Classification
+
+The goal of this project is to perform text classification using a custom-built Transformer Encoder and to conduct a **comparative analysis** between two prominent pooling strategies: **<CLS> token** and **Mean Pooling**. By isolating these methods, we aim to identify their unique characteristics and performance trade-offs.
 
 
 # 1. Concept Overview
@@ -171,12 +173,8 @@ All models used in this project follow this exact architecture, with the only di
 | **Val F1-Score** | **0.90** | 0.90 |
 
 ### 5.1.2 Analysis
-Overall, the experimental results showed **minimal performance differences** between the **Mean Pooling model** and the **<CLS> Token model**. Both methods achieved comparable accuracy, suggesting that for the given dataset and architecture, the pooling strategy did not act as a primary bottleneck.
+Initial results showed minimal performance differences between the Mean Pooling and <CLS> Token models, as both achieved comparable accuracy. However, clear signs of overfitting emerged, with validation loss diverging from training loss. To address this and better differentiate the two methods, I increased the dropout rate by 0.1 to strengthen regularization. While this mitigated the overfitting, the performance gap remained narrow. Consequently, I increased the model depth to 12 layers to observe how each strategy handles information under architectural stress.
 
-However, an analysis of the training and validation curves revealed clear signs of **overfitting**. While the training loss continued to decrease, the validation loss began to plateau or diverge, indicating that the model was starting to memorize the training data rather than generalizing.
-
-To address the overfitting issue and more clearly differentiate the performance of the methods, I plan to:
-* **Increase the Dropout rate by 0.1** to enhance the model's regularization.
 ## 5.2 dropout=0.3 Model Hyperparameters
 ### 5.2.1 dropout=0.3 Model performance
 <img width="1490" height="590" alt="dropout_0 3" src="https://github.com/user-attachments/assets/ca1578c2-f1a6-4e69-862d-cffc10e7839d" />
@@ -189,9 +187,7 @@ To address the overfitting issue and more clearly differentiate the performance 
 | **F1-Score** | 0.89 | **0.90** |
 
 ### 5.2.2 Analysis
-드롭아웃을 올렸더니, 과대적합이 어느정도 완화되었다.
-하지만 두 모델 사이에서 성능의 차이가 발견되지 않았다.
-그래서 두 모델의 성능의 차이를 확인하기 위해서, 이번에는 모델의 깊이를 늘렸다.
+To address the initial overfitting, I increased the dropout rate, which successfully mitigated the gap between training and validation performance to some extent. However, even with improved regularization, there was no significant performance disparity observed between the Mean Pooling and <CLS> Token models in the shallow configuration. This led to the conclusion that a more complex architectural environment was needed to identify the unique characteristics of each method. Consequently, I increased the model depth to 12 layers to stress-test both pooling strategies and observe how they handle information across a deeper network.
 ## 5.3 dropout=0.3, n_layer=12 Model Hyperparameters
 ## 5.3.1 dropout=0.3, n_layer=12 Model performance
 <img width="1489" height="590" alt="dropout_0 3_n_layer=12" src="https://github.com/user-attachments/assets/954bcdf5-0052-4b60-8961-836feb8bdf42" />
@@ -204,8 +200,37 @@ To address the overfitting issue and more clearly differentiate the performance 
 | **Val F1-Score** | 0.11 | **0.83** |
 
 ### 5.3.2 Analysis
-layer의 수를 12로하여 모델의 깊이를 늘리니, 모델의 성능이 완전히 달라졌다.
-먼저 Mean Pooling Model은 0.25에 해당하는 정확도로 random으로 골랐을 때와 똑같은 성능이 나왔다.
-반면에, CLS Token Model은 모델의 성능은 전 모델에 비해서 낮아졌지만, 그래도 꽤 괜찮은 성능을 보여주었다.
-나는 Mean Pooling Model의 성능이 급락한 이유는, $$h_{mean} = \frac{1}{N} \sum_{i=1}^{N} x_i^{(L)}$$
+At 12 layers, the Mean Pooling model's performance collapsed to an accuracy of 0.25, equivalent to a random guess. This suggests that in deeper networks, the arithmetic mean dilutes the semantic signal with accumulated noise. Conversely, the `<CLS>` Token model maintained relatively stable performance, demonstrating higher robustness. This indicates that the `<CLS>` method, powered by self-attention, is more effective at selectively aggregating task-relevant features and filtering out the noise that propagates through deeper architectures.
 
+# 6. Performance in test dataset
+
+## 6.1 Base Model
+
+| Metric | Mean Pooling Model | CLS Token Model |
+| :--- | :---: | :---: |
+| **Accuracy** | 0.8859 | **0.8926** |
+| **Precision** | 0.89 | **0.89** |
+| **Recall** | 0.89 | **0.89** |
+| **F1-Score** | 0.89 | **0.89** |
+## 6.2 dropout=0.3 Model
+
+| Metric | Mean Pooling Model | CLS Token Model |
+| :--- | :---: | :---: |
+| **Accuracy** | 0.8987 | **0.9021** |
+| **Precision** | 0.90 | **0.90** |
+| **Recall** | 0.90 | **0.90** |
+| **F1-Score** | 0.90 | **0.90** |
+## 6.3 dropout=0.3, n_layer=12 Model
+
+| Metric | Mean Pooling Model | CLS Token Model |
+| :--- | :---: | :---: |
+| **Val Accuracy** | 0.2538 | **0.8308** |
+| **Val Precision** | 0.19 | **0.83** |
+| **Val Recall** | 0.25 | **0.83** |
+| **Val F1-Score** | 0.11 | **0.83** |
+
+## 6.4 Review
+In the final evaluation on the test data, the **`<CLS>` Token model** demonstrated slightly superior performance compared to the Mean Pooling model, though the margin remained narrow in shallow configurations. However, the most significant finding occurred when the model depth was increased to **12 layers**. In this deep architecture, the **Mean Pooling model's performance collapsed**, performing no better than a **random classifier**. This highlights a critical limitation of mean pooling in deep Transformers, where the accumulation of noise across layers overwhelms the averaged semantic signal. In contrast, the `<CLS>` token's ability to selectively aggregate information through self-attention proved essential for maintaining model robustness as depth increased.
+
+# 6. Conclution
+In summary, my experiment reveals that **Mean Pooling fails to work in deep models (such as 12 layers)**. This happens because, as the model gets deeper, "noise" or useless information builds up. When we average all the words together, this noise drowns out the actual meaning of the text, leading to a complete failure in performance. On the other hand, **the `<CLS>` token remains effective even in deep layers** because it uses attention to pick only the important information for classification. Therefore, **for deep Transformer models, using the `<CLS>` token is a much more reliable choice** than simple mean pooling to keep the model's performance stable.
