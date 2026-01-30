@@ -1,4 +1,3 @@
-# cls-vs-mean-pooling-transformer-classification
 # Comparative Analysis: <CLS> Token vs. Mean Pooling in Transformer-based Classification
 
 The goal of this project is to perform text classification using a custom-built Transformer Encoder and to conduct a **comparative analysis** between two prominent pooling strategies: **<CLS> token** and **Mean Pooling**. By isolating these methods, we aim to identify their unique characteristics and performance trade-offs.
@@ -234,4 +233,5 @@ In the final evaluation on the test data, the **`<CLS>` Token model** demonstrat
 
 # 7. Conclution
 In summary, my experiment reveals that **Mean Pooling fails to work in deep models (such as 12 layers)**. This happens because, as the model gets deeper, "noise" or useless information builds up. When we average all the words together, this noise drowns out the actual meaning of the text, leading to a complete failure in performance. On the other hand, **the `<CLS>` token remains effective even in deep layers** because it uses attention to pick only the important information for classification. Therefore, **for deep Transformer models, using the `<CLS>` token is a much more reliable choice** than simple mean pooling to keep the model's performance stable.
+
 
