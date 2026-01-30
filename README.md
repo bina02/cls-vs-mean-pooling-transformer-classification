@@ -171,22 +171,27 @@ All models used in this project follow this exact architecture, with the only di
 | **Val F1-Score** | **0.90** | 0.90 |
 
 ### 5.1.2 Analysis
-전체적으로 봤을 때, 이 경우, Mean Pooling Model과 CLS Token Model과의 성능차이가 거의 없었다.
-하지만 그래프를 봤을 때, 과대적합의 양상이 보였으므로, dropout을 0.1 늘리고 다시 비교해볼 계획이다.
+Overall, the experimental results showed **minimal performance differences** between the **Mean Pooling model** and the **<CLS> Token model**. Both methods achieved comparable accuracy, suggesting that for the given dataset and architecture, the pooling strategy did not act as a primary bottleneck.
 
+However, an analysis of the training and validation curves revealed clear signs of **overfitting**. While the training loss continued to decrease, the validation loss began to plateau or diverge, indicating that the model was starting to memorize the training data rather than generalizing.
+
+To address the overfitting issue and more clearly differentiate the performance of the methods, I plan to:
+* **Increase the Dropout rate by 0.1** to enhance the model's regularization.
 ## 5.2 dropout=0.3 Model Hyperparameters
 ### 5.2.1 dropout=0.3 Model performance
 <img width="1490" height="590" alt="dropout_0 3" src="https://github.com/user-attachments/assets/ca1578c2-f1a6-4e69-862d-cffc10e7839d" />
 
 | Metric | Mean Pooling Model | CLS Token Model |
 | :--- | :---: | :---: |
-| **Val Accuracy** | 0.2552 | **0.8302** |
-| **Val Precision** | 0.20 | **0.83** |
-| **Val Recall** | 0.26 | **0.83** |
-| **Val F1-Score** | 0.11 | **0.83** |
+| **Accuracy** | 0.8906 | **0.8982** |
+| **Precision** | 0.89 | **0.90** |
+| **Recall** | 0.89 | **0.90** |
+| **F1-Score** | 0.89 | **0.90** |
 
 ### 5.2.2 Analysis
-
+드롭아웃을 올렸더니, 과대적합이 어느정도 완화되었다.
+하지만 두 모델 사이에서 성능의 차이가 발견되지 않았다.
+그래서 두 모델의 성능의 차이를 확인하기 위해서, 이번에는 모델의 깊이를 늘렸다.
 ## 5.3 dropout=0.3, n_layer=12 Model Hyperparameters
 ## 5.3.1 dropout=0.3, n_layer=12 Model performance
 <img width="1489" height="590" alt="dropout_0 3_n_layer=12" src="https://github.com/user-attachments/assets/954bcdf5-0052-4b60-8961-836feb8bdf42" />
@@ -199,4 +204,8 @@ All models used in this project follow this exact architecture, with the only di
 | **Val F1-Score** | 0.11 | **0.83** |
 
 ### 5.3.2 Analysis
+layer의 수를 12로하여 모델의 깊이를 늘리니, 모델의 성능이 완전히 달라졌다.
+먼저 Mean Pooling Model은 0.25에 해당하는 정확도로 random으로 골랐을 때와 똑같은 성능이 나왔다.
+반면에, CLS Token Model은 모델의 성능은 전 모델에 비해서 낮아졌지만, 그래도 꽤 괜찮은 성능을 보여주었다.
+나는 Mean Pooling Model의 성능이 급락한 이유는, $$h_{mean} = \frac{1}{N} \sum_{i=1}^{N} x_i^{(L)}$$
 
